@@ -1,5 +1,12 @@
-import { ModelWithID } from './../../models/models';
-import { Column, DataType, Table } from 'sequelize-typescript';
+import {
+  BelongsToMany,
+  Column,
+  DataType,
+  Model,
+  Table,
+} from 'sequelize-typescript';
+import { User } from 'src/users/entities/user.entity';
+import { UserRole } from './user-role.entity';
 
 interface RoleCreationAttrs {
   value: string;
@@ -7,11 +14,10 @@ interface RoleCreationAttrs {
 }
 
 @Table({ tableName: 'role', timestamps: false })
-export class Role extends ModelWithID<Role, RoleCreationAttrs> {
+export class Role extends Model<Role, RoleCreationAttrs> {
   @Column({
     type: DataType.STRING,
-    unique: true,
-    allowNull: false,
+    primaryKey: true,
   })
   value: string;
 
@@ -19,4 +25,7 @@ export class Role extends ModelWithID<Role, RoleCreationAttrs> {
     type: DataType.STRING,
   })
   description: string;
+
+  @BelongsToMany(() => User, () => UserRole)
+  users: User[];
 }

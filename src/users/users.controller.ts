@@ -6,37 +6,45 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { findOne } from './dto/user.params';
 
-@Controller('users')
+@Controller()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
   @Get()
+  @HttpCode(HttpStatus.OK)
   findAll() {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @Get(':user_id')
+  @HttpCode(HttpStatus.OK)
+  findOne(@Param() params: findOne) {
+    return this.usersService.findOne(params);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Patch(':user_id')
+  @HttpCode(HttpStatus.OK)
+  update(@Param() params: findOne, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(params, updateUserDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @Delete(':user_id')
+  @HttpCode(HttpStatus.OK)
+  remove(@Param() params: findOne) {
+    return this.usersService.remove(params);
   }
 }

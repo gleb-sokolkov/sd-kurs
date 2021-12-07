@@ -5,6 +5,10 @@ import { RouterModule } from 'nest-router';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
+import { User } from './users/entities/user.entity';
+import { Role } from './roles/entities/role.entity';
+import { UserRole } from './roles/entities/user-role.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -17,14 +21,15 @@ import { RolesModule } from './roles/roles.module';
       port: parseInt(process.env.POSTGRES_PORT),
       username: process.env.POSTGRES_USERNAME,
       password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_HOST,
-      models: [],
+      database: process.env.POSTGRES_DATABASE,
+      models: [User, Role, UserRole],
       autoLoadModels: true,
       sync: { force: JSON.parse(process.env.POSTGRES_SYNCHRONIZE) },
     }),
     RouterModule.forRoutes(routes),
     UsersModule,
     RolesModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
