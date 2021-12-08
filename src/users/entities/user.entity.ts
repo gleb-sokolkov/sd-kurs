@@ -1,5 +1,12 @@
-import { BelongsToMany, Column, DataType, Table } from 'sequelize-typescript';
+import {
+  BelongsToMany,
+  Column,
+  DataType,
+  HasMany,
+  Table,
+} from 'sequelize-typescript';
 import { ModelWithID } from 'src/models/models';
+import { Question } from 'src/question/entities/question.entity';
 import { Role } from 'src/roles/entities/role.entity';
 import { UserRole } from 'src/roles/entities/user-role.entity';
 
@@ -25,4 +32,7 @@ export class User extends ModelWithID<User, UserCreationAttrs> {
 
   @BelongsToMany(() => Role, () => UserRole)
   roles: Role[];
+
+  @HasMany(() => Question, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  questions: Question[];
 }

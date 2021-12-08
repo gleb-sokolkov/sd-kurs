@@ -9,6 +9,11 @@ import { User } from './users/entities/user.entity';
 import { Role } from './roles/entities/role.entity';
 import { UserRole } from './roles/entities/user-role.entity';
 import { AuthModule } from './auth/auth.module';
+import { QuestionModule } from './question/question.module';
+import { ThemeModule } from './theme/theme.module';
+import { Theme } from './theme/entities/theme.entity';
+import { Question } from './question/entities/question.entity';
+import { ThemeQuestion } from './theme/entities/theme-question.entity';
 
 @Module({
   imports: [
@@ -22,7 +27,7 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.POSTGRES_USERNAME,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      models: [User, Role, UserRole],
+      models: [User, Role, UserRole, Theme, Question, ThemeQuestion],
       autoLoadModels: true,
       sync: { force: JSON.parse(process.env.POSTGRES_SYNCHRONIZE) },
     }),
@@ -30,6 +35,8 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
     RolesModule,
     AuthModule,
+    QuestionModule,
+    ThemeModule,
   ],
 })
 export class AppModule {}

@@ -39,7 +39,7 @@ export class UsersService {
 
   async findAll() {
     const users = await this.userRepo.findAll({ include: [Role] });
-    if (!users) {
+    if (users.length === 0) {
       throw new BadRequestException(`There are no users in the table`);
     }
     return users;

@@ -19,7 +19,7 @@ export class RolesService {
 
   async findAll() {
     const roles = await this.roleRepo.findAll();
-    if (!roles) {
+    if (roles.length === 0) {
       throw new BadRequestException(`There aren't any roles in the table`);
     }
     return roles;

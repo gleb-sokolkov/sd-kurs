@@ -10,7 +10,7 @@ import {
 import { RolesService } from './roles.service';
 import { RoleDto } from './dto/role.dto';
 import { findOne } from './dto/role.params';
-import { RolesPipe } from 'src/roles.pipe';
+import { RolesPipe } from 'src/pipes/roles.pipe';
 
 @Controller()
 export class RolesController {
