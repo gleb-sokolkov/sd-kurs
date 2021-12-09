@@ -5,6 +5,7 @@ import {
   HasMany,
   Table,
 } from 'sequelize-typescript';
+import { Answer } from 'src/answer/entities/answer.entity';
 import { ModelWithID } from 'src/models/models';
 import { Question } from 'src/question/entities/question.entity';
 import { Role } from 'src/roles/entities/role.entity';
@@ -35,4 +36,7 @@ export class User extends ModelWithID<User, UserCreationAttrs> {
 
   @HasMany(() => Question, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   questions: Question[];
+
+  @HasMany(() => Answer, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  answers: Answer[];
 }

@@ -14,6 +14,8 @@ import { ThemeModule } from './theme/theme.module';
 import { Theme } from './theme/entities/theme.entity';
 import { Question } from './question/entities/question.entity';
 import { ThemeQuestion } from './theme/entities/theme-question.entity';
+import { AnswerModule } from './answer/answer.module';
+import { Answer } from './answer/entities/answer.entity';
 
 @Module({
   imports: [
@@ -27,7 +29,7 @@ import { ThemeQuestion } from './theme/entities/theme-question.entity';
       username: process.env.POSTGRES_USERNAME,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      models: [User, Role, UserRole, Theme, Question, ThemeQuestion],
+      models: [User, Role, UserRole, Theme, Question, ThemeQuestion, Answer],
       autoLoadModels: true,
       sync: { force: JSON.parse(process.env.POSTGRES_SYNCHRONIZE) },
     }),
@@ -37,6 +39,7 @@ import { ThemeQuestion } from './theme/entities/theme-question.entity';
     AuthModule,
     QuestionModule,
     ThemeModule,
+    AnswerModule,
   ],
 })
 export class AppModule {}

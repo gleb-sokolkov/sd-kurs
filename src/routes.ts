@@ -1,4 +1,5 @@
 import { Routes } from 'nest-router';
+import { AnswerModule } from './answer/answer.module';
 import { AuthModule } from './auth/auth.module';
 import { QuestionModule } from './question/question.module';
 import { RolesModule } from './roles/roles.module';
@@ -13,6 +14,12 @@ export const routes: Routes = [
       {
         path: '/:user_id/questions',
         module: QuestionModule,
+        children: [
+          {
+            path: '/:question_id/answers',
+            module: AnswerModule,
+          },
+        ],
       },
     ],
   },

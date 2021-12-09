@@ -4,8 +4,10 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Table,
 } from 'sequelize-typescript';
+import { Answer } from 'src/answer/entities/answer.entity';
 import { ModelWithID } from 'src/models/models';
 import { ThemeQuestion } from 'src/theme/entities/theme-question.entity';
 import { Theme } from 'src/theme/entities/theme.entity';
@@ -42,4 +44,7 @@ export class Question extends ModelWithID<Question, QuestionCreationAttrs> {
 
   @BelongsToMany(() => Theme, () => ThemeQuestion)
   themes: Theme[];
+
+  @HasMany(() => Answer, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  answers: Answer[];
 }
