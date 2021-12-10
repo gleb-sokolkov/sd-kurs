@@ -6,6 +6,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { Answer } from 'src/answer/entities/answer.entity';
+import { Message } from 'src/message/entities/message.entity';
 import { ModelWithID } from 'src/models/models';
 import { Question } from 'src/question/entities/question.entity';
 import { Role } from 'src/roles/entities/role.entity';
@@ -39,4 +40,18 @@ export class User extends ModelWithID<User, UserCreationAttrs> {
 
   @HasMany(() => Answer, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   answers: Answer[];
+
+  @HasMany(() => Message, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    foreignKey: 'receiver_id',
+  })
+  received_messages: Message[];
+
+  @HasMany(() => Message, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    foreignKey: 'sender_id',
+  })
+  sended_messages: Message[];
 }

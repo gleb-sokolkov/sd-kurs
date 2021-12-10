@@ -1,3 +1,4 @@
+import { MessageModule } from './message/message.module';
 import { Routes } from 'nest-router';
 import { AnswerModule } from './answer/answer.module';
 import { AuthModule } from './auth/auth.module';
@@ -20,6 +21,10 @@ export const routes: Routes = [
             module: AnswerModule,
           },
         ],
+      },
+      {
+        path: '/:user_id/messages',
+        module: MessageModule,
       },
     ],
   },
