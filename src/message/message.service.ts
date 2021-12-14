@@ -11,40 +11,35 @@ export class MessageService {
   constructor(@InjectModel(Message) private messageRepo: typeof Message) {}
 
   async create(params: findOne, dto: CreateMessageDto) {
-    const message = await this.messageRepo.create(
-      Object.assign(dto, {
-        receiver_id: params.user_id,
-      }),
-      {
-        include: [
-          {
-            model: User,
-            as: 'sender',
-          },
-          {
-            model: User,
-            as: 'receiver',
-          },
-        ],
-      },
-    );
-    return message;
+    try {
+      const message = await this.messageRepo.create(
+        Object.assign(dto, {
+          receiver_id: params.receiver_id,
+        }),
+        {
+          include: [
+            { model: User, as: 'sender' },
+            { model: User, as: 'receiver' },
+          ],
+        },
+      );
+      return message;
+    } catch (ex) {
+      throw new BadRequestException({
+        message: `Failed to create message`,
+        params,
+        dto,
+      });
+    }
   }
 
   async findAll(params: findOne) {
+    const { message_id, ...findAll } = params;
     const messages = await this.messageRepo.findAll({
-      where: {
-        receiver_id: params.user_id,
-      },
+      where: findAll,
       include: [
-        {
-          model: User,
-          as: 'sender',
-        },
-        {
-          model: User,
-          as: 'receiver',
-        },
+        { model: User, as: 'sender' },
+        { model: User, as: 'receiver' },
       ],
     });
     if (messages.length === 0)
@@ -57,18 +52,10 @@ export class MessageService {
 
   async findOne(params: findOne) {
     const message = await this.messageRepo.findOne({
-      where: {
-        id: params.message_id,
-      },
+      where: params,
       include: [
-        {
-          model: User,
-          as: 'sender',
-        },
-        {
-          model: User,
-          as: 'receiver',
-        },
+        { model: User, as: 'sender' },
+        { model: User, as: 'receiver' },
       ],
     });
     if (!message)
@@ -83,7 +70,7 @@ export class MessageService {
     await this.findOne(params);
     try {
       const result = await this.messageRepo.update(dto, {
-        where: { id: params.message_id },
+        where: params,
         returning: true,
       });
       return result[1][0];
@@ -91,14 +78,13 @@ export class MessageService {
       throw new BadRequestException({
         message: 'Failed to update the message in the table',
         params,
+        dto,
       });
     }
   }
 
   async remove(params: findOne) {
-    const status = await this.messageRepo.destroy({
-      where: { id: params.message_id },
-    });
+    const status = await this.messageRepo.destroy({ where: params });
     if (!status)
       throw new BadRequestException({
         message: 'Failed to destroy the message in the table',

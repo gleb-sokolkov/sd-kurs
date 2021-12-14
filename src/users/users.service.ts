@@ -33,7 +33,10 @@ export class UsersService {
       newUser.roles = [role];
       return newUser;
     } catch (ex) {
-      throw new BadRequestException(`There are some errors on user create`);
+      throw new BadRequestException({
+        message: `There are some errors on user create`,
+        dto,
+      });
     }
   }
 
@@ -47,14 +50,15 @@ export class UsersService {
 
   async findOne(params: findOne) {
     const user = await this.userRepo.findOne({
-      where: {
-        id: params.user_id,
-      },
+      where: params,
       include: [Role],
     });
 
     if (!user) {
-      throw new BadRequestException(`User with id:${params.user_id} not found`);
+      throw new BadRequestException({
+        message: `There is no such user in the table`,
+        params,
+      });
     }
     return user;
   }
@@ -71,25 +75,26 @@ export class UsersService {
     await this.findOne(params);
     try {
       const result = await this.userRepo.update(dto, {
-        where: { id: params.user_id },
+        where: params,
         returning: true,
       });
       return result[1][0];
     } catch (ex) {
-      throw new BadRequestException(
-        `Failed to update user with id:${params.user_id}, perhaps the email is already taken`,
-      );
+      throw new BadRequestException({
+        message: `Failed to update user, perhaps the email is already taken`,
+        params,
+        dto,
+      });
     }
   }
 
   async remove(params: findOne) {
-    const status = await this.userRepo.destroy({
-      where: { id: params.user_id },
-    });
+    const status = await this.userRepo.destroy({ where: params });
     if (!status) {
-      throw new BadRequestException(
-        `Failed to delete user with id:${params.user_id}`,
-      );
+      throw new BadRequestException({
+        message: `Failed to delete user with id:${params.user_id}`,
+        params,
+      });
     }
   }
 }

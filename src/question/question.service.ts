@@ -16,13 +16,21 @@ export class QuestionService {
 
   async create(params: findOne, dto: CreateQuestionDto) {
     const themes = await this.themeService.findByIDArray(dto.themes);
-    const question = await this.questionRepo.create({
-      ...dto,
-      user_id: params.user_id,
-    });
-    await question.$set('themes', themes);
-    question.themes = themes;
-    return question;
+    try {
+      const question = await this.questionRepo.create({
+        ...dto,
+        user_id: params.user_id,
+      });
+      await question.$set('themes', themes);
+      question.themes = themes;
+      return question;
+    } catch (ex) {
+      throw new BadRequestException({
+        message: `Failed to create a new question`,
+        params,
+        dto,
+      });
+    }
   }
 
   async findAll(params: findOne) {
@@ -37,10 +45,7 @@ export class QuestionService {
 
   async findOne(params: findOne) {
     const question = await this.questionRepo.findOne({
-      where: {
-        id: params.question_id,
-        user_id: params.user_id,
-      },
+      where: params,
       include: [Theme],
     });
     if (!question)
@@ -49,42 +54,30 @@ export class QuestionService {
   }
 
   async update(params: findOne, dto: UpdateQuestionDto) {
+    const { themes, ...updateDto } = dto;
     await this.findOne(params);
     try {
-      const result = await this.questionRepo.update(
-        {
-          name: dto.name,
-          text: dto.text,
-          user_id: params.user_id,
-        },
-        {
-          where: {
-            id: params.question_id,
-            user_id: params.user_id,
-          },
-          returning: true,
-        },
-      );
+      const result = await this.questionRepo.update(updateDto, {
+        where: params,
+        returning: true,
+      });
       const question = result[1][0];
-      if (dto.themes) {
+      if (themes) {
         const themes = await this.themeService.findByIDArray(dto.themes);
         question.$set('themes', themes);
       }
       return question;
     } catch (ex) {
-      throw new BadRequestException(
-        `Failed to update question with params:${params}`,
-      );
+      throw new BadRequestException({
+        message: `Failed to update the question`,
+        params,
+        dto,
+      });
     }
   }
 
   async remove(params: findOne) {
-    const status = await this.questionRepo.destroy({
-      where: {
-        id: params.question_id,
-        user_id: params.user_id,
-      },
-    });
+    const status = await this.questionRepo.destroy({ where: params });
     if (!status)
       throw new BadRequestException(
         `Failed to destroy question with params:${params}`,

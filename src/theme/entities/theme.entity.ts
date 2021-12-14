@@ -1,5 +1,10 @@
-import { BelongsToMany, Column, DataType, Table } from 'sequelize-typescript';
-import { ModelWithID } from 'src/models/models';
+import {
+  BelongsToMany,
+  Column,
+  DataType,
+  Model,
+  Table,
+} from 'sequelize-typescript';
 import { Question } from 'src/question/entities/question.entity';
 import { ThemeQuestion } from './theme-question.entity';
 
@@ -8,7 +13,15 @@ interface ThemeCreationAttrs {
 }
 
 @Table({ tableName: 'theme', timestamps: false })
-export class Theme extends ModelWithID<Theme, ThemeCreationAttrs> {
+export class Theme extends Model<Theme, ThemeCreationAttrs> {
+  @Column({
+    type: DataType.INTEGER,
+    unique: true,
+    primaryKey: true,
+    autoIncrement: true,
+  })
+  theme_id: number;
+
   @Column({
     type: DataType.STRING,
     allowNull: false,

@@ -10,19 +10,24 @@ export class AnswerService {
   constructor(@InjectModel(Answer) private answerRepo: typeof Answer) {}
 
   async create(params: findOne, dto: CreateAnswerDto) {
-    const answer = await this.answerRepo.create(
-      Object.assign(dto, {
+    try {
+      const answer = await this.answerRepo.create({
+        ...dto,
         question_id: params.question_id,
-        user_id: params.user_id,
-      }),
-    );
-    return answer;
+      });
+      return answer;
+    } catch (ex) {
+      throw new BadRequestException({
+        message: `Failed to create a new answer`,
+        params,
+        dto,
+      });
+    }
   }
 
   async findAll(params: findOne) {
-    const answers = await this.answerRepo.findAll({
-      where: { question_id: params.question_id },
-    });
+    const { user_id, answer_id, ...findAll } = params;
+    const answers = await this.answerRepo.findAll({ where: findAll });
     if (answers.length === 0)
       throw new BadRequestException({
         message: `Not found any answers to this question`,
@@ -32,11 +37,8 @@ export class AnswerService {
   }
 
   async findOne(params: findOne) {
-    const answer = await this.answerRepo.findOne({
-      where: {
-        id: params.answer_id,
-      },
-    });
+    const { user_id, ...findOne } = params;
+    const answer = await this.answerRepo.findOne({ where: findOne });
     if (!answer)
       throw new BadRequestException({
         message: `Not found the answer to this question`,
@@ -48,8 +50,9 @@ export class AnswerService {
   async update(params: findOne, dto: UpdateAnswerDto) {
     await this.findOne(params);
     try {
+      const { user_id, ...updateOne } = params;
       const result = await this.answerRepo.update(dto, {
-        where: { id: params.answer_id },
+        where: updateOne,
         returning: true,
       });
       return result[1][0];
@@ -57,19 +60,18 @@ export class AnswerService {
       throw new BadRequestException({
         message: `Failed to update an answer`,
         params,
+        dto,
       });
     }
   }
 
   async remove(params: findOne) {
-    const status = await this.answerRepo.destroy({
-      where: { id: params.answer_id },
-    });
+    const { user_id, ...removeOne } = params;
+    const status = await this.answerRepo.destroy({ where: removeOne });
     if (!status)
       throw new BadRequestException({
         message: `Failed to delete an answer`,
         params,
       });
-    return status;
   }
 }

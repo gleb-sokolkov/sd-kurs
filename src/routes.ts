@@ -23,7 +23,7 @@ export const routes: Routes = [
         ],
       },
       {
-        path: '/:user_id/messages',
+        path: '/:receiver_id/messages',
         module: MessageModule,
       },
     ],

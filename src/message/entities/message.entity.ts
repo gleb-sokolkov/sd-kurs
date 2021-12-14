@@ -3,9 +3,9 @@ import {
   Column,
   DataType,
   ForeignKey,
+  Model,
   Table,
 } from 'sequelize-typescript';
-import { ModelWithID } from 'src/models/models';
 import { User } from 'src/users/entities/user.entity';
 
 interface MessageCreationAttrs {
@@ -13,14 +13,26 @@ interface MessageCreationAttrs {
 }
 
 @Table({ tableName: 'message', timestamps: true })
-export class Message extends ModelWithID<Message, MessageCreationAttrs> {
+export class Message extends Model<Message, MessageCreationAttrs> {
+  @Column({
+    type: DataType.INTEGER,
+    unique: true,
+    primaryKey: true,
+    autoIncrement: true,
+  })
+  message_id: number;
+
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   text: string;
 
-  @BelongsTo(() => User, 'sender_id')
+  @BelongsTo(() => User, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    foreignKey: 'sender_id',
+  })
   sender: User;
 
   @ForeignKey(() => User)
@@ -30,7 +42,11 @@ export class Message extends ModelWithID<Message, MessageCreationAttrs> {
   })
   sender_id: number;
 
-  @BelongsTo(() => User, 'receiver_id')
+  @BelongsTo(() => User, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    foreignKey: 'receiver_id',
+  })
   receiver: User;
 
   @ForeignKey(() => User)
