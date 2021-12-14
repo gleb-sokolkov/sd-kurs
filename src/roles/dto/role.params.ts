@@ -1,3 +1,7 @@
+import { IsOptional, IsString } from 'class-validator';
+
 export class findOne {
-  role_value: string;
+  @IsOptional()
+  @IsString()
+  value: string;
 }
