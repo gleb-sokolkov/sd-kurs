@@ -22,13 +22,16 @@ export class UsersService {
         `User with email: ${dto.email} already exists`,
       );
 
-    dto.password = bcrypt.hashSync(
+    const role = await this.rolesService.findOne({ value: 'USER' });
+
+    const newDto = dto;
+    newDto.password = bcrypt.hashSync(
       dto.password,
       parseInt(process.env.SALT_ROUNDS),
     );
+
     try {
-      const newUser = await this.userRepo.create(dto);
-      const role = await this.rolesService.findByValue('USER');
+      const newUser = await this.userRepo.create(newDto);
       await newUser.$set('roles', [role]);
       newUser.roles = [role];
       return newUser;
