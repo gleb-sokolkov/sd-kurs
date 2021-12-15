@@ -10,7 +10,7 @@ export class RolesService {
   constructor(@InjectModel(Role) private roleRepo: typeof Role) {}
 
   async create(dto: CreateRoleDto) {
-    const role = await this.findByValue(dto.value);
+    const role = await this.roleRepo.findOne({ where: { value: dto.value } });
     if (role) {
       throw new BadRequestException(`Role ${dto.value} already exists`);
     }
@@ -35,10 +35,6 @@ export class RolesService {
       });
     }
     return role;
-  }
-
-  async findByValue(value: string) {
-    return this.roleRepo.findOne({ where: { value } });
   }
 
   async update(params: findOne, dto: UpdateRoleDto) {
